@@ -1,37 +1,32 @@
 ﻿using MimeKit;
 using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using AngleSharp;
 using MailKit.Net.Smtp;
-using MailKit;
-using Microsoft.Extensions.Configuration;
-using MimeKit;
 
 namespace LiveForexRatesAlertWebScraper.Infrastructure
 {
     public class EmailSender
     {
-        private const string V = "Title";
-        
-        public async void test()
+        private string _msgBody;
+            
+        public EmailSender(string msgBody)
         {
-            var sett = Config.Get();
-
-            string mailserviceaddress = Config.Get().GetSection("Email:HostAddress").Value;
-            int mailserviceport = 587;
-            string senderemail = Config.Get().GetSection("Email:Sender:Email").Value;
-            string senderpassword = Config.Get().GetSection("Email:Sender:Password").Value;
-            string recipientemail = Config.Get().GetSection("Email:RecipientEmail").Value;
+            _msgBody = msgBody;
+        }
+        
+        public async void Send()
+        {
+            string mailserviceaddress = Config.Get().Email.HostAddress;
+            int mailserviceport = Config.Get().Email.HostPort;
+            string senderemail = Config.Get().Email.Sender.Email;
+            string senderpassword = Config.Get().Email.Sender.Password;
+            string recipientemail = Config.Get().Email.RecipientEmail;
 
             var msg = new MimeMessage();
-            msg.From.Add(new MailboxAddress("Web Scraper", "price-alert-noreply@localhost.com"));
+            msg.From.Add(new MailboxAddress("Currency Alert", "price-alert-noreply@localhost.com"));
             msg.To.Add(new MailboxAddress("Me", recipientemail));
 
-            msg.Subject = "this is subject";
-            msg.Body = new TextPart("plain") { Text = "msgBody" };
+            msg.Subject = "This is a price alert!";
+            msg.Body = new TextPart("plain") { Text = _msgBody };
 
             try
             {
