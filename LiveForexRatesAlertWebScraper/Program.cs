@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Threading.Channels;
 using System.Timers;
 using AngleSharp;
 using AngleSharp.Css;
@@ -18,10 +20,11 @@ namespace LiveForexRatesAlertWebScraper
         static void Main(string[] args)
         {
             SetTimer();
+            ValidationForCheckCurrencyAlerts();
 
-            EmailSender emailSender = new EmailSender();
-            emailSender.test();
-            
+            ////EmailSender emailSender = new EmailSender();
+            ////emailSender.test();
+
             Console.WriteLine("\nPress the Enter key to exit the application...\n");
             Console.WriteLine("The application started at {0:HH:mm:ss.fff}", DateTime.Now);
             Console.ReadLine();
@@ -29,7 +32,7 @@ namespace LiveForexRatesAlertWebScraper
             _timer.Dispose();
         }
 
-        static void PrintCurrenciesToConsole(object sender, ElapsedEventArgs e)
+        static void CheckCurrencyValuesAndSendAlert(object sender, ElapsedEventArgs e)
         {
             Console.Clear();
             var results = WebScraper.GetCurrencyPairs(webSite);
@@ -40,10 +43,38 @@ namespace LiveForexRatesAlertWebScraper
             }
         }
         
-        private static void SetTimer()
+        static void ValidationForCheckCurrencyAlerts()
+        {
+            var results = WebScraper.GetCurrencyPairs(webSite);
+
+            var alerts = Config.Get().GetSection("alerts").GetChildren().ToArray();
+
+            foreach (var item in alerts)
+            {
+                var result = results.Result.Exists(m => m.Name == item.Key);
+
+                if (!result)
+                {
+                    Console.WriteLine("Invalid price alert in appsettings.json!");
+                    _timer.Stop();
+                }
+                else
+                {
+                    Console.WriteLine("Valid price alert in appsettings.json!");
+                }
+            }
+            
+            foreach (var item in results.Result)
+            {
+                Console.WriteLine(item.Name + " " + item.BidPrice + " " + item.AskPrice);
+            }
+         
+        }
+        
+        static void SetTimer()
         {
             _timer = new System.Timers.Timer(5000);
-            _timer.Elapsed += PrintCurrenciesToConsole;
+            _timer.Elapsed += CheckCurrencyValuesAndSendAlert;
             _timer.AutoReset = true;
             _timer.Enabled = true;
         }
