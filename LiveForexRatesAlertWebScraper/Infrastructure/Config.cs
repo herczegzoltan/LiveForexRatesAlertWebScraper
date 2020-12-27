@@ -5,8 +5,6 @@ using System.Text;
 using LiveForexRatesAlertWebScraper.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Org.BouncyCastle.Asn1.X509;
-
 namespace LiveForexRatesAlertWebScraper.Infrastructure
 {
     public static class Config
