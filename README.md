@@ -1,5 +1,5 @@
 # Live forex rates alert with WebScraper
-This is a .NET Core console application what can notify via Email when certan currency pair reachs the specified alert price.
+This is a .NET Core console application what can notify via Email when certain currency pair reaches the specified alert price.
 
 Quote from [https://docs.microsoft.com/en-us/dotnet/api/system.net.mail.smtpclient?view=netcore-3.0#remarks]
 
