@@ -7,7 +7,7 @@ namespace LiveForexRatesAlertWebScraper.Models
     public class Alert
     {
         public string name { get; set; }
-        public string price { get; set; }
+        public float price { get; set; }
         public string direction { get; set; }
     }
 
