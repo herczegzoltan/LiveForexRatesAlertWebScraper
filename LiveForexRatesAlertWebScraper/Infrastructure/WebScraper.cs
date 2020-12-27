@@ -15,9 +15,6 @@ namespace LiveForexRatesAlertWebScraper.Infrastructure
             var context = BrowsingContext.New(config);
             var document = await context.OpenAsync(webSite);
 
-            // Only for debuggging
-            // _logger.LogInformation(document.DocumentElement.OuterHtml);
-
             var instrumentTilesRows = document.GetElementById("cr1");
 
             var tbody = instrumentTilesRows.QuerySelectorAll("tr");
